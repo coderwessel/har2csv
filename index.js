@@ -35,7 +35,7 @@ function run(harInputPath, harOutputPath, options) {
   const harFile = JSON.parse(harFileText);
 
   let flatEntries = [];
-  let modus = (options == "-d")? option.uniquedomain : option.verbose;
+  let modus = (options == "d")? option.uniquedomain : option.verbose;
 
   if(harFile.log && harFile.log.entries) {
     harFile.log.entries.forEach((entry, entryIndex) => {
@@ -57,15 +57,20 @@ function run(harInputPath, harOutputPath, options) {
 
     let formattedEntries = [];
     if (modus == option.uniquedomain){
-      flatEntries.forEach( (url) =>{
-        let domain = (new URL(url));
-        domain = domain.hostname;
-        if (!formattedEntries.includes(domain)) formattedEntries.push(domain);
+      flatEntries.forEach( (harEntry, index) =>{
+        if (index==0)return;
+        //console.log(harEntry[3]); 
+        let domain = (new URL(harEntry[3]));
+        let domainString = domain.hostname;
+        //console.log(harEntry[3]+ ", "+domainString+", "+typeof(domainString));
+        if (!formattedEntries.some(r => r.includes(domainString))) formattedEntries.push([domainString]);
       });
+      //console.log(formattedEntries);
     }
     else formattedEntries = [...flatEntries];
 
     stringify(formattedEntries, function(err, output) {
+      console.log(output);
       fs.writeFile(harOutputPath, output, function (err) {
         if (err) return console.log(err);
       });
