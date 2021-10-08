@@ -70,7 +70,7 @@ function run(harInputPath, harOutputPath, options) {
     else formattedEntries = [...flatEntries];
 
     stringify(formattedEntries, function(err, output) {
-      console.log(output);
+      //console.log(output);
       fs.writeFile(harOutputPath, output, function (err) {
         if (err) return console.log(err);
       });
