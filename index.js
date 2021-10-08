@@ -14,23 +14,28 @@
  * limitations under the License.
  *
  **/
+/**
+ * forked and modified by coderwessel
+ **/
 
 const fs = require('fs');
 const match = require('@menadevs/objectron');
 const stringify = require('csv-stringify');
 const commander = require('commander');
-
+const option = {"verbose":1, "uniquedomain":2};
+Object.freeze(option);
 
 commander
- .arguments('<harInputPath> <harOutputPath>')
+ .arguments('<harInputPath> <harOutputPath> <options>')
  .action(run)
  .parse(process.argv);
 
-function run(harInputPath, harOutputPath) {
+function run(harInputPath, harOutputPath, options) {
   const harFileText = fs.readFileSync(harInputPath);
   const harFile = JSON.parse(harFileText);
 
   let flatEntries = [];
+  let modus = (options == "-d")? option.uniquedomain : option.verbose;
 
   if(harFile.log && harFile.log.entries) {
     harFile.log.entries.forEach((entry, entryIndex) => {
@@ -50,7 +55,17 @@ function run(harInputPath, harOutputPath) {
       }
     });
 
-    stringify(flatEntries, function(err, output) {
+    let formattedEntries = [];
+    if (modus == option.uniquedomain){
+      flatEntries.forEach( (url) =>{
+        let domain = (new URL(url));
+        domain = domain.hostname;
+        if (!formattedEntries.includes(domain)) formattedEntries.push(domain);
+      });
+    }
+    else formattedEntries = [...flatEntries];
+
+    stringify(formattedEntries, function(err, output) {
       fs.writeFile(harOutputPath, output, function (err) {
         if (err) return console.log(err);
       });
