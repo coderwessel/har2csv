@@ -57,13 +57,14 @@ function run(harInputPath, harOutputPath, options) {
 
     let formattedEntries = [];
     if (modus == option.uniquedomain){
+      let site = flatEntries[1][3];
       flatEntries.forEach( (harEntry, index) =>{
         if (index==0)return;
         //console.log(harEntry[3]); 
         let domain = (new URL(harEntry[3]));
         let domainString = domain.hostname;
         //console.log(harEntry[3]+ ", "+domainString+", "+typeof(domainString));
-        if (!formattedEntries.some(r => r.includes(domainString))) formattedEntries.push([domainString]);
+        if (!formattedEntries.some(r => r.includes(domainString))) formattedEntries.push([domainString, site]);
       });
       //console.log(formattedEntries);
     }
