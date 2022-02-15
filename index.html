@@ -25,6 +25,7 @@
 	try {
 		const formData = new FormData(form);
         const result = document.getElementById('result');
+        result.innerHTML=`<img src='loading-white.gif'/>`
         console.log(formData.values);
 		
         const responseData = await fetch(url, {
