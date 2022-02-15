@@ -35,6 +35,7 @@ var app       =   express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('./public'));
 
 var storage =   multer.diskStorage({
   destination: function (req, file, callback) {
