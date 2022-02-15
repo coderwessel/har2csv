@@ -32,11 +32,25 @@ commander
 
 function run(harInputPath, harOutputPath, options) {
   const harFileText = fs.readFileSync(harInputPath);
+  let modus = (options == "d")? option.uniquedomain : option.verbose;
+  
+  formattedEntries = evaluateHarFileText(harFileText, modus);
+  
+  if (formattedEntries != null) stringify(formattedEntries, function(err, output) {
+    //console.log(output);
+    fs.writeFile(harOutputPath, output, function (err) {
+      if (err) return console.log(err);
+    });
+  });
+  
+  
+}
+
+function evaluateHarFileText(harFileText, modus){
   const harFile = JSON.parse(harFileText);
 
   let flatEntries = [];
-  let modus = (options == "d")? option.uniquedomain : option.verbose;
-
+  
   if(harFile.log && harFile.log.entries) {
     harFile.log.entries.forEach((entry, entryIndex) => {
       const currentEntry = evaluateHarEntry(entry);
@@ -69,15 +83,10 @@ function run(harInputPath, harOutputPath, options) {
       //console.log(formattedEntries);
     }
     else formattedEntries = [...flatEntries];
-
-    stringify(formattedEntries, function(err, output) {
-      //console.log(output);
-      fs.writeFile(harOutputPath, output, function (err) {
-        if (err) return console.log(err);
-      });
-    });
+    return formattedEntries;
   } else {
     console.error('Invalid HAR file!');
+    return null;
   }
 }
 
