@@ -1,0 +1,47 @@
+<H1>HAR 2 Whitelist</H1>
+<ul>
+    <li>Open the website you need to whitelist in your browser (chrome or edge)</li>
+    <li>Use developer tools (F12) in your browser to record network traffic as you browse through the website</li>
+    <li>Right click and save the traffic log as har with content</li>
+    <li>Upload the saved .har file here to convert it to a list with the internet domains that were visited</li>
+    <li>Use this list to program your firewall or other network filtering tool</li>
+</ul>
+
+<form id="harform" enctype="multipart/form-data" action="./har" method="POST">
+    <label for="har-upload">Upload .har file:</label>
+    <input type="file" id="harfile" name="harfile">
+    <button type="submit" value="harfile">Convert</button>
+</form>
+
+<p id="result" ></p>
+
+<script>
+    async function handleFormSubmit(event) {
+	event.preventDefault();
+
+	const form = event.currentTarget;
+	const url = form.action;
+
+	try {
+		const formData = new FormData(form);
+        const result = document.getElementById('result');
+        console.log(formData.values);
+		
+        const responseData = await fetch(url, {
+            method: "POST",
+            body: formData,
+        });
+        const list = await responseData.json();
+	    console.log(list);
+        string=list.csv.replace(/\n/g, "<br />");
+        result.innerHTML=string;
+
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+const exampleForm = document.getElementById("harform");
+exampleForm.addEventListener("submit", handleFormSubmit);
+
+</script>
